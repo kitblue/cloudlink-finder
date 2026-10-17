@@ -20,11 +20,14 @@ jobs:
       - name: 获取上游最新版本
         id: upstream
         run: |
-          UPSTREAM_TAG=$(curl -sL "https://api.github.com/repos/jindekun520-dev/cloudlink-finder/releases/latest" | python3 -c "import sys,json;print((json.load(sys.stdin).get('tag_name') or '').strip())")
+          UPSTREAM_VERSION=$(curl -sL "https://raw.githubusercontent.com/jindekun520-dev/cloudlink-finder/main/fpk/manifest" | awk -F '=' '/^[[:space:]]*version[[:space:]]*=/ {gsub(/[[:space:]]/, "", $2); print $2}')
+          if [ -z "$UPSTREAM_VERSION" ]; then
+            UPSTREAM_VERSION=$(curl -sL "https://raw.githubusercontent.com/jindekun520-dev/cloudlink-finder/main/frontend/package.json" | python3 -c "import sys,json;print(json.load(sys.stdin).get('version') or '')")
+          fi
           CUR_VERSION="$(awk -F '=' '/^[[:space:]]*version[[:space:]]*=/ {gsub(/[[:space:]]/, "", $2); print $2}' fpk/manifest)"
-          echo "UPSTREAM_TAG=${UPSTREAM_TAG}" >> "$GITHUB_OUTPUT"
+          echo "UPSTREAM_TAG=${UPSTREAM_VERSION}" >> "$GITHUB_OUTPUT"
           echo "CUR_VERSION=${CUR_VERSION}" >> "$GITHUB_OUTPUT"
-          echo "上游最新: ${UPSTREAM_TAG} | 当前: v${CUR_VERSION}"
+          echo "上游最新: v${UPSTREAM_VERSION} | 当前: v${CUR_VERSION}"
 
       - name: 同步上游代码并推送
         if: steps.upstream.outputs.UPSTREAM_TAG != '' && steps.upstream.outputs.UPSTREAM_TAG != steps.upstream.outputs.CUR_VERSION
