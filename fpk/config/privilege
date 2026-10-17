@@ -3,5 +3,8 @@
         "run-as": "package"
     },
     "username": "cloudlink-finder",
-    "groupname": "cloudlink-finder"
+    "groupname": "cloudlink-finder",
+    "join-groups": [
+        "docker"
+    ]
 }
