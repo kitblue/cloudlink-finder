@@ -55,10 +55,9 @@ if [ -z "$FNPACK" ]; then
             Darwin-arm64)               FNPACK_OS_ARCH="darwin-arm64" ;;
             *) echo "[error] 不支持的平台 $(uname -s)-$(uname -m)" >&2; exit 1 ;;
         esac
-        FNPACK_URL="https://static2.fnnas.com/share/mirrors/fnpack/fnpack-${FNPACK_VERSION}-${FNPACK_OS_ARCH}.tar.gz"
+        FNPACK_URL="https://static2.fnnas.com/fnpack/fnpack-${FNPACK_VERSION}-${FNPACK_OS_ARCH}"
         echo "[info] 下载 fnpack ${FNPACK_VERSION} (${FNPACK_OS_ARCH}) ..."
-        curl -fsSL "$FNPACK_URL" -o "${FNPACK_DIR}/fnpack.tar.gz"
-        tar -xzf "${FNPACK_DIR}/fnpack.tar.gz" -C "$FNPACK_DIR"
+        curl -fsSL "$FNPACK_URL" -o "$FNPACK"
         chmod +x "$FNPACK"
     fi
 fi
