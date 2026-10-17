@@ -4,7 +4,7 @@
     "name": "cloudlink-finder",
     "author": "kitblue",
     "homepage": "https://github.com/kitblue/cloudlink-finder",
-    "description": "网盘搜索神器（CloudLink Finder）官方离线源：离线 FPK 已内置 Docker 镜像，安装无需连接 Docker Hub；新版本发布后本源自动跟随更新。"
+    "description": "网盘搜索神器（CloudLink Finder）自更新官方源：本仓库内置应用商店源 fnpack.json，离线 FPK 已内置 Docker 镜像（安装无需连接 Docker Hub）；跟随上游新版本自动构建发布并更新本源，添加本源后应用中心自动获得后续版本更新。"
   },
   "apps": {
     "cloudlink-finder": {
