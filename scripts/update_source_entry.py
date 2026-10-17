@@ -1,18 +1,23 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-"""更新 kitblue/fnthird 源中 cloudlink-finder 条目（不存在则创建）。
+"""更新飞牛应用商店源中 cloudlink-finder 条目（不存在则创建）。
+
+支持两种目标仓库：
+- 默认：kitblue/fnthird 的 fnpack.json（第三方子源）
+- 本仓库：kitblue/cloudlink-finder 的 fnpack.json（本项目自身即源）
 
 环境变量:
   APP_VERSION    版本号（如 1.0.10，可带 v 前缀）
   APP_SHA256     fpk 的 sha256
   APP_SIZE       fpk 字节数
-  FNTHIRD_TOKEN  有 kitblue/fnthird 仓库写权限的 PAT
+  TARGET_REPO    目标仓库（默认 kitblue/fnthird），如 kitblue/cloudlink-finder
+  FNTHIRD_TOKEN  有目标仓库写权限的 PAT（workflow 中也可用 GITHUB_TOKEN）
 """
 import os, sys, json, base64, urllib.request
 
 TOKEN = os.environ.get('FNTHIRD_TOKEN') or os.environ.get('GITHUB_TOKEN')
 if not TOKEN:
-    sys.exit('缺少 FNTHIRD_TOKEN')
+    sys.exit('缺少 FNTHIRD_TOKEN 或 GITHUB_TOKEN')
 
 VERSION = os.environ.get('APP_VERSION', '').lstrip('v')
 SHA = os.environ.get('APP_SHA256', '').strip().lower()
@@ -20,7 +25,7 @@ SIZE = int(os.environ.get('APP_SIZE', '0') or 0)
 if not VERSION or not SHA or not SIZE:
     sys.exit(f'参数不完整 VERSION={VERSION!r} SHA={SHA!r} SIZE={SIZE!r}')
 
-REPO = 'kitblue/fnthird'
+REPO = os.environ.get('TARGET_REPO', 'kitblue/fnthird').strip()
 PATH = 'fnpack.json'
 API = 'https://api.github.com'
 HDR = {'Authorization': f'token {TOKEN}', 'User-Agent': 'fnunify-sync', 'Accept': 'application/vnd.github+json'}
@@ -84,4 +89,4 @@ req(f'{API}/repos/{REPO}/contents/{PATH}', 'PUT', {
     'content': base64.b64encode(out.encode('utf-8')).decode(),
     'sha': meta['sha'],
 })
-print(f'OK fnthird 已更新: cloudlink-finder v{VERSION} sha256={SHA} size={SIZE}')
+print(f'OK {REPO} 已更新: cloudlink-finder v{VERSION} sha256={SHA} size={SIZE}')
