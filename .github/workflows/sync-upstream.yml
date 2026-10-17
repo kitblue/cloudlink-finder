@@ -1,0 +1,47 @@
+name: Sync Upstream
+
+on:
+  schedule:
+    - cron: '0 */6 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 检出代码
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: 获取上游最新版本
+        id: upstream
+        run: |
+          UPSTREAM_TAG=$(curl -sL "https://api.github.com/repos/jindekun520-dev/cloudlink-finder/releases/latest" | python3 -c "import sys,json;print((json.load(sys.stdin).get('tag_name') or '').strip())")
+          CUR_VERSION="$(awk -F '=' '/^[[:space:]]*version[[:space:]]*=/ {gsub(/[[:space:]]/, "", $2); print $2}' fpk/manifest)"
+          echo "UPSTREAM_TAG=${UPSTREAM_TAG}" >> "$GITHUB_OUTPUT"
+          echo "CUR_VERSION=${CUR_VERSION}" >> "$GITHUB_OUTPUT"
+          echo "上游最新: ${UPSTREAM_TAG} | 当前: v${CUR_VERSION}"
+
+      - name: 同步上游代码并推送
+        if: steps.upstream.outputs.UPSTREAM_TAG != '' && steps.upstream.outputs.UPSTREAM_TAG != steps.upstream.outputs.CUR_VERSION
+        run: |
+          set -e
+          TAG="${{ steps.upstream.outputs.UPSTREAM_TAG }}"
+          VERSION="${TAG#v}"
+          git fetch --depth 1 "https://github.com/jindekun520-dev/cloudlink-finder.git" "$TAG"
+          git rm -r -q --ignore-unmatch backend frontend docker nginx supervisor 2>/dev/null || true
+          git checkout "FETCH_HEAD" -- backend frontend docker nginx supervisor
+          sed -i "s/^version=.*/version=${VERSION}/" fpk/manifest
+          git add -A
+          git -c user.name="cloudlink-sync[bot]" -c user.email="sync@kitblue.noreply" commit -m "chore: sync upstream ${TAG}"
+          git push
+          echo "已同步并推送上游 ${TAG}；构建发布与 fnthird 源更新由 Build Offline FPK 流水线自动完成"
+          echo "SYNCED=true" >> "$GITHUB_OUTPUT"
+
+      - name: 无新版本
+        if: steps.upstream.outputs.UPSTREAM_TAG == steps.upstream.outputs.CUR_VERSION
+        run: echo "当前已是最新版本 v${{ steps.upstream.outputs.CUR_VERSION }}，无需同步"
