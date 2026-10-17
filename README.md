@@ -32,6 +32,7 @@ CloudLink Finder 是一个面向互联网公开分享链接的多网盘资源聚
 
 1. 打开飞牛 fnOS 应用中心。
 2. 进入“应用商店源”管理，添加以下任一源地址：
+   - 本源（本项目仓库自带源）：`https://raw.githubusercontent.com/kitblue/cloudlink-finder/main/fnpack.json`
    - fnthird（子源）：`https://raw.githubusercontent.com/kitblue/fnthird/main/fnpack.json`
    - FnUnify（统一聚合源，推荐）：`https://raw.githubusercontent.com/kitblue/FnUnify/main/fnpack.json`
 3. 刷新商店源列表，搜索“网盘搜索神器”或 `cloudlink-finder`。
@@ -170,7 +171,7 @@ npm run dev
 
 ## 自动更新说明
 
-本仓库通过 GitHub Actions 自动跟随上游 `jindekun520-dev/cloudlink-finder` 的新版本：检测到上游发布新版本后自动同步代码、构建内置镜像的离线 FPK、发布 Release，并同步更新 fnthird 应用商店源条目（版本、下载地址、sha256），FnUnify 聚合源随后自动收录。
+本仓库通过 GitHub Actions 自动跟随上游 `jindekun520-dev/cloudlink-finder` 的新版本：检测到上游发布新版本后自动同步代码、构建内置镜像的离线 FPK、发布 Release，并同步更新本源 `fnpack.json`（本仓库根目录，可直接作为应用商店源添加）与 fnthird 应用商店源条目（版本、下载地址、sha256），FnUnify 聚合源随后自动收录。
 
 ## 使用说明
 
