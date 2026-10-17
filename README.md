@@ -2,10 +2,7 @@
 
 CloudLink Finder 是一个面向互联网公开分享链接的多网盘资源聚合搜索工具。它支持夸克网盘、百度网盘、阿里云盘、迅雷网盘等主流网盘，并提供链接有效性检测、标题匹配、网盘筛选、提取码复制和新页面打开等功能。
 
-项目提供两种使用方式：
-
-1. **本地或服务器 Docker 部署**：部署完成后，通过浏览器访问。
-2. **飞牛 fnOS FPK 安装**：在飞牛 NAS 应用中心手动安装，通过桌面图标或浏览器访问。
+本项目提供 **飞牛 fnOS 离线安装包（Docker 镜像内置版）**：安装包内已内置应用 Docker 镜像，安装时自动加载，全程无需连接 Docker Hub，适用于无法稳定访问 Docker Hub 的网络环境。
 
 ## 功能特性
 
@@ -20,124 +17,34 @@ CloudLink Finder 是一个面向互联网公开分享链接的多网盘资源聚
 - ⚡ **搜索缓存**：相同关键词在短时间内使用缓存，加快重复搜索
 - 🔧 **可扩展搜索源**：支持通过配置添加自定义搜索 API
 
-## 两种使用方式
+## 飞牛 fnOS 使用方式
 
-| 使用方式 | 适用场景 | 安装入口 | 访问方式 |
-|---|---|---|---|
-| Docker 本地部署 | 电脑、Linux 服务器、普通 NAS 或开发测试 | 克隆仓库并运行 Docker Compose | `http://本机或服务器IP:8899` |
-| 飞牛 FPK 安装 | 飞牛 fnOS NAS 用户 | 应用中心 → 手动安装 → 上传 FPK | 桌面图标或 `http://飞牛NAS-IP:8899` |
+| 安装方式 | 适用场景 | 安装入口 |
+|---|---|---|
+| 应用商店源安装（推荐） | 飞牛 fnOS 用户，一键安装并自动跟随版本更新 | 应用中心 → 应用商店源 |
+| 手动安装 FPK | 已下载离线安装包，或不想添加商店源 | 应用中心 → 手动安装 |
 
-如果你使用的是飞牛 NAS，推荐选择 FPK 安装；如果你需要在电脑、服务器或其他 NAS 上运行，选择 Docker 部署。
+如果你使用的是飞牛 NAS，推荐使用应用商店源安装：后续发布新版本会自动推送到应用中心，无需手动下载。
 
-## 方式一：本地或服务器 Docker 部署
+### 方式一：应用商店源安装（推荐）
 
-### 环境要求
+应用已收录进第三方应用商店源 **fnthird**，并随 **FnUnify** 聚合源同步。在飞牛应用中心添加应用商店源后即可直接搜索安装。
 
-- Docker 24 或更高版本
-- Docker Compose v2（使用 `docker compose` 命令）
-- 能够访问项目配置的 Node.js 和 Python 基础镜像
-- 默认端口 `8899` 未被其他程序占用
+1. 打开飞牛 fnOS 应用中心。
+2. 进入“应用商店源”管理，添加以下任一源地址：
+   - fnthird（子源）：`https://raw.githubusercontent.com/kitblue/fnthird/main/fnpack.json`
+   - FnUnify（统一聚合源，推荐）：`https://raw.githubusercontent.com/kitblue/FnUnify/main/fnpack.json`
+3. 刷新商店源列表，搜索“网盘搜索神器”或 `cloudlink-finder`。
+4. 点击安装。安装包为离线版（Docker 镜像已内置），安装过程不访问 Docker Hub。
 
-支持安装 Docker Desktop 的 macOS、Windows，以及安装了 Docker Engine 的 Linux 服务器或 NAS。
+### 方式二：手动安装 FPK
 
-### 1. 获取代码
-
-从 GitHub 克隆：
-
-```bash
-git clone https://github.com/jindekun520-dev/cloudlink-finder.git
-cd cloudlink-finder
-```
-
-国内网络也可以从 Gitee 克隆：
-
-```bash
-git clone https://gitee.com/jindekun_admin/cloudlink-finder.git
-cd cloudlink-finder
-```
-
-### 2. 构建并启动
-
-在项目根目录执行：
-
-```bash
-docker compose -f docker/docker-compose.yaml up -d --build
-```
-
-第一次启动会构建前端和后端镜像，所需时间取决于设备性能与网络环境。
-
-### 3. 浏览器访问
-
-在部署机器本机访问：
-
-```text
-http://localhost:8899
-```
-
-从局域网中的其他设备访问：
-
-```text
-http://部署机器IP:8899
-```
-
-例如部署机器的局域网 IP 是 `192.168.1.100`：
-
-```text
-http://192.168.1.100:8899
-```
-
-### 4. 使用其他端口
-
-如果 `8899` 已被占用，可以在启动时指定其他端口：
-
-```bash
-PORT=18899 docker compose -f docker/docker-compose.yaml up -d --build
-```
-
-然后访问：
-
-```text
-http://部署机器IP:18899
-```
-
-### 5. 查看状态和日志
-
-```bash
-docker compose -f docker/docker-compose.yaml ps
-docker compose -f docker/docker-compose.yaml logs -f
-```
-
-健康检查接口：
-
-```text
-http://部署机器IP:8899/api/health
-```
-
-### 6. 停止或更新
-
-停止应用：
-
-```bash
-docker compose -f docker/docker-compose.yaml down
-```
-
-获取新版本并重新构建：
-
-```bash
-git pull
-docker compose -f docker/docker-compose.yaml up -d --build
-```
-
-搜索缓存和应用数据保存在 Docker 数据卷 `cloudlink-finder-data` 中。普通的 `docker compose down` 不会删除该数据卷；不要在未备份数据时执行带 `-v` 的删除命令。
-
-## 方式二：飞牛 fnOS 安装 FPK
-
-### 环境要求
+#### 环境要求
 
 - 飞牛 fnOS `1.1.3100` 或更高版本
 - 已启用 Docker 服务
 - 默认端口 `8899` 未被其他应用占用
-- 安装和首次构建期间能够访问所需的 Docker 基础镜像
+- 无需访问 Docker Hub（镜像已内置在安装包中）
 
 FPK 的应用标识为：
 
@@ -148,43 +55,31 @@ cloudlink-finder
 当前包声明支持平台：
 
 ```text
-x86 / ARM（platform = all）
+x86
 ```
 
-### 1. 获取 FPK 安装包
+#### 1. 获取离线 FPK 安装包
 
-优先从 GitHub 或 Gitee 的项目发布页下载最新的：
+从本仓库 Release 页下载最新安装包：
 
 ```text
-cloudlink-finder-<版本号>.fpk
+cloudlink-finder-<版本号>-offline.fpk
 ```
 
-- [GitHub 项目地址](https://github.com/jindekun520-dev/cloudlink-finder)
-- [Gitee 项目地址](https://gitee.com/jindekun_admin/cloudlink-finder)
+- [GitHub Release 页](https://github.com/kitblue/cloudlink-finder/releases)
 
-如果发布页暂未提供预编译 FPK，可以在 macOS 或 Linux 上从源码构建：
+`-offline` 后缀表示该安装包为 Docker 镜像内置版，安装全程无需联网拉取镜像。
 
-```bash
-./scripts/build-fpk.sh
-./scripts/verify-fpk.sh
-```
-
-构建脚本会自动下载飞牛官方 `fnpack 1.2.3`，并将带版本号的安装包输出到：
-
-```text
-release/cloudlink-finder-<版本号>.fpk
-```
-
-### 2. 在飞牛应用中心安装
+#### 2. 在飞牛应用中心安装
 
 1. 登录飞牛 fnOS 管理界面。
 2. 打开“应用中心”。
 3. 点击“手动安装”。
-4. 选择并上传 `cloudlink-finder-<版本号>.fpk`。
+4. 选择并上传 `cloudlink-finder-<版本号>-offline.fpk`。
 5. 阅读权限和端口提示，确认安装。
-6. 等待应用容器完成构建并启动。
+6. 应用中心会自动加载安装包内内置的 Docker 镜像并启动应用，无需联网拉取镜像。
 
-### 3. 打开应用
+#### 3. 打开应用
 
 安装成功后，可以使用以下任一方式访问：
 
@@ -201,7 +96,7 @@ http://飞牛NAS-IP:8899
 http://192.168.1.20:8899
 ```
 
-### 4. 数据目录和升级说明
+#### 4. 数据目录和升级说明
 
 当前 FPK 的持久化数据目录为：
 
@@ -240,7 +135,7 @@ npm run dev
 | 前端 | Vue 3 + TypeScript + Vite |
 | 后端 | Python FastAPI |
 | 数据库 | SQLite |
-| 容器 | Docker + Nginx + Supervisor |
+| 容器 | Docker + Nginx + Supervisor（离线包镜像已内置） |
 | 飞牛打包 | fnpack + FPK |
 
 ## 搜索源说明
@@ -269,8 +164,13 @@ npm run dev
 
 ## 项目仓库
 
-- GitHub：[jindekun520-dev/cloudlink-finder](https://github.com/jindekun520-dev/cloudlink-finder)
-- Gitee：[jindekun_admin/cloudlink-finder](https://gitee.com/jindekun_admin/cloudlink-finder)
+- 离线版发布仓库：[kitblue/cloudlink-finder](https://github.com/kitblue/cloudlink-finder)（本仓库，Release 提供内置 Docker 镜像的离线 FPK）
+- 上游项目：[jindekun520-dev/cloudlink-finder](https://github.com/jindekun520-dev/cloudlink-finder)（功能与代码上游，本仓库自动跟随其新版本）
+- 应用商店源：fnthird（kitblue/fnthird）、FnUnify（kitblue/FnUnify）
+
+## 自动更新说明
+
+本仓库通过 GitHub Actions 自动跟随上游 `jindekun520-dev/cloudlink-finder` 的新版本：检测到上游发布新版本后自动同步代码、构建内置镜像的离线 FPK、发布 Release，并同步更新 fnthird 应用商店源条目（版本、下载地址、sha256），FnUnify 聚合源随后自动收录。
 
 ## 使用说明
 
