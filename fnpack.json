@@ -41,6 +41,15 @@
               "size": 88270684
             }
           }
+        },
+        "1.0.11": {
+          "packages": {
+            "x86": {
+              "download_url": "https://github.com/kitblue/cloudlink-finder/releases/download/v1.0.11/cloudlink-finder-1.0.11-offline.fpk",
+              "sha256": "9d4944403b93877070cfb92a089114f1cd552217d345a1e70e34030e616c3c04",
+              "size": 88264110
+            }
+          }
         }
       },
       "appname": "cloudlink-finder",
