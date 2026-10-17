@@ -17,6 +17,10 @@
         "系统工具"
       ],
       "icon_url": "https://raw.githubusercontent.com/kitblue/cloudlink-finder/main/ICON.PNG",
+      "preview_urls": [
+        "https://raw.githubusercontent.com/kitblue/cloudlink-finder/main/screenshots/preview_home.png",
+        "https://raw.githubusercontent.com/kitblue/cloudlink-finder/main/screenshots/preview_settings.png"
+      ],
       "distributor": "kitblue",
       "distributor_url": "https://github.com/kitblue",
       "author": "jindekun520-dev",
