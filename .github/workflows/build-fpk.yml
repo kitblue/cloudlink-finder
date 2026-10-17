@@ -87,3 +87,13 @@ jobs:
           echo "sha256=${SHA}"
           echo "size=${SIZE}"
           APP_VERSION="${{ env.VERSION }}" APP_SHA256="${SHA}" APP_SIZE="${SIZE}" python3 scripts/update_source_entry.py
+
+      - name: 同步更新本仓库源文件 fnpack.json
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: |
+          FPK=$(ls release/*.fpk | head -1)
+          SHA=$(sha256sum "$FPK" | awk '{print $1}')
+          SIZE=$(stat -c%s "$FPK")
+          APP_VERSION="${{ env.VERSION }}" APP_SHA256="${SHA}" APP_SIZE="${SIZE}" \
+            TARGET_REPO="kitblue/cloudlink-finder" python3 scripts/update_source_entry.py
