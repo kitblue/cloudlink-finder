@@ -47,7 +47,7 @@ base_entry = {
     'display_name': '网盘搜索神器',
     'desc': '多网盘资源聚合搜索工具：支持夸克、百度、阿里、迅雷等 9 种网盘的公开分享链接检索，提供链接有效性验证、标题匹配、网盘筛选、提取码复制、暗色模式与搜索缓存。离线版安装包已内置 Docker 镜像，安装无需连接 Docker Hub。',
     'platform': ['x86'],
-    'categories': ['网络工具'],
+    'categories': ['系统工具'],
     'icon_url': 'https://raw.githubusercontent.com/kitblue/cloudlink-finder/main/ICON.PNG',
     'distributor': 'kitblue',
     'distributor_url': 'https://github.com/kitblue',
