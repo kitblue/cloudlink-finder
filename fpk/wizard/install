@@ -4,7 +4,7 @@
         "items": [
             {
                 "type": "tips",
-                "helpText": "CloudLink Finder 将安装以下内容：\n• 多源网盘聚合搜索服务\n• 链接有效性和标题匹配校验\n• Web 搜索界面（端口 8899）\n\n首次安装需要由 Docker 构建运行镜像，请保持网络畅通。"
+                "helpText": "CloudLink Finder 将安装以下内容：\n• 多源网盘聚合搜索服务\n• 链接有效性和标题匹配校验\n• Web 搜索界面（端口 8899）\n\n应用镜像已随安装包内置，安装过程无需连接 Docker Hub。"
             },
             {
                 "type": "switch",
