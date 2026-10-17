@@ -1,3 +1,11 @@
 #!/bin/bash
 
+# 升级时先加载内置离线镜像，再交给应用中心重启容器
+set -e
+
+IMAGE_TAR="$(ls "${TRIM_APPDEST}"/docker/cloudlink-finder-*.tar.gz 2>/dev/null | head -n1 || true)"
+if [ -n "$IMAGE_TAR" ] && [ -f "$IMAGE_TAR" ]; then
+    echo "[offline] docker load -i ${IMAGE_TAR}"
+    docker load -i "$IMAGE_TAR" >/dev/null 2>&1 || echo "[warn] docker load failed"
+fi
 exit 0
