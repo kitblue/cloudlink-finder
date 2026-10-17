@@ -35,7 +35,7 @@ jobs:
           set -e
           TAG="${{ steps.upstream.outputs.UPSTREAM_TAG }}"
           VERSION="${TAG#v}"
-          git fetch --depth 1 "https://github.com/jindekun520-dev/cloudlink-finder.git" "$TAG"
+          git fetch --depth 1 "https://github.com/jindekun520-dev/cloudlink-finder.git" main
           git rm -r -q --ignore-unmatch backend frontend docker nginx supervisor 2>/dev/null || true
           git checkout "FETCH_HEAD" -- backend frontend docker nginx supervisor
           sed -i "s/^version=.*/version=${VERSION}/" fpk/manifest
