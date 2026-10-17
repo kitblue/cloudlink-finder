@@ -69,7 +69,8 @@ jobs:
         run: |
           VERSION="${{ env.VERSION }}"
           if gh release view "v${VERSION}" >/dev/null 2>&1; then
-            echo "Release v${VERSION} 已存在，跳过创建"
+            echo "Release v${VERSION} 已存在，覆盖更新资产"
+            gh release upload "v${VERSION}" "release/cloudlink-finder-${VERSION}-offline.fpk" --clobber
           else
             gh release create "v${VERSION}" "release/cloudlink-finder-${VERSION}-offline.fpk" \
               --title "CloudLink Finder v${VERSION} (offline)" \
