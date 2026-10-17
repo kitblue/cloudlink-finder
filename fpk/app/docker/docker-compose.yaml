@@ -1,10 +1,6 @@
 services:
   cloudlink-finder:
-    build:
-      context: .
-      dockerfile: Dockerfile
-      args:
-        PYTHON_IMAGE: ${PYTHON_IMAGE:-python:3.12-slim}
+    image: cloudlink-finder:__VERSION__
     container_name: cloudlink-finder
     restart: unless-stopped
     ports:
