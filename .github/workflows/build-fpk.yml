@@ -64,11 +64,26 @@ jobs:
           path: release/*.fpk
 
       - name: 发布 Release（含离线 fpk）
-        if: github.event_name == 'push'
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
           VERSION="${{ env.VERSION }}"
-          gh release create "v${VERSION}" "release/cloudlink-finder-${VERSION}-offline.fpk" \
-            --title "CloudLink Finder v${VERSION} (offline)" \
-            --notes "离线安装包：Docker 镜像已内置，安装无需连接 Docker Hub。"
+          if gh release view "v${VERSION}" >/dev/null 2>&1; then
+            echo "Release v${VERSION} 已存在，跳过创建"
+          else
+            gh release create "v${VERSION}" "release/cloudlink-finder-${VERSION}-offline.fpk" \
+              --title "CloudLink Finder v${VERSION} (offline)" \
+              --notes "离线安装包：Docker 镜像已内置，安装无需连接 Docker Hub。"
+          fi
+
+      - name: 在线计算 sha256 并更新 fnthird 源
+        env:
+          FNTHIRD_TOKEN: ${{ secrets.FNTHIRD_TOKEN }}
+        run: |
+          FPK=$(ls release/*.fpk | head -1)
+          SHA=$(sha256sum "$FPK" | awk '{print $1}')
+          SIZE=$(stat -c%s "$FPK")
+          echo "fpk=${FPK}"
+          echo "sha256=${SHA}"
+          echo "size=${SIZE}"
+          APP_VERSION="${{ env.VERSION }}" APP_SHA256="${SHA}" APP_SIZE="${SIZE}" python3 scripts/update_source_entry.py
