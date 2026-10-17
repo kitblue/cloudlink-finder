@@ -8,9 +8,11 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.config import settings
-from app.database import init_db
+from app.database import init_db, async_session
 from app.api.search import router as search_router
 from app.api.sources import router as sources_router
+from app.api.settings import router as settings_router
+from app.api.settings import apply_persisted_settings
 from app.services.searcher import orchestrator
 
 # 配置日志
@@ -27,6 +29,9 @@ async def lifespan(app: FastAPI):
     logger.info(f"启动 {settings.APP_NAME} v{settings.APP_VERSION}")
     await init_db()
     logger.info("数据库初始化完成")
+    # 应用持久化的搜索源启用设置
+    async with async_session() as session:
+        await apply_persisted_settings(session)
     logger.info(f"已加载 {len(orchestrator.get_sources())} 个搜索源")
 
     yield
@@ -53,6 +58,7 @@ app.add_middleware(
 # 注册路由
 app.include_router(search_router)
 app.include_router(sources_router)
+app.include_router(settings_router)
 
 
 @app.get("/api/health")

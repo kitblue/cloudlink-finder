@@ -1,3 +1,5 @@
+name: cloudlink-finder
+
 services:
   cloudlink-finder:
     build:

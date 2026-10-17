@@ -20,9 +20,25 @@ export interface CloudType {
   name: string
 }
 
+const DEFAULT_TYPES_STORAGE_KEY = 'pan-search-default-types'
+const DEFAULT_TYPES = ['quark', 'aliyun']
+
+function loadDefaultTypes(): string[] {
+  try {
+    const raw = localStorage.getItem(DEFAULT_TYPES_STORAGE_KEY)
+    if (raw) {
+      const arr = JSON.parse(raw)
+      if (Array.isArray(arr)) {
+        return arr.filter((t) => typeof t === 'string')
+      }
+    }
+  } catch {}
+  return [...DEFAULT_TYPES]
+}
+
 export const useSearchStore = defineStore('search', () => {
   const keyword = ref('')
-  const selectedTypes = ref<string[]>(["quark", "aliyun"])
+  const selectedTypes = ref<string[]>(loadDefaultTypes())
   const sortBy = ref('relevance')
   const results = ref<SearchItem[]>([])
   const total = ref(0)
@@ -47,6 +63,34 @@ export const useSearchStore = defineStore('search', () => {
       if (data.code === 0) {
         cloudTypes.value = data.data
       }
+    } catch {}
+  }
+
+  async function fetchDefaultTypes() {
+    try {
+      const res = await fetch('/api/settings')
+      const data = await res.json()
+      if (data.code === 0) {
+        const types = data.data.default_types
+        if (Array.isArray(types) && types.length > 0) {
+          selectedTypes.value = types
+          localStorage.setItem(DEFAULT_TYPES_STORAGE_KEY, JSON.stringify(types))
+        }
+      }
+    } catch {}
+  }
+
+  async function saveDefaultTypes(types: string[]) {
+    selectedTypes.value = types
+    try {
+      localStorage.setItem(DEFAULT_TYPES_STORAGE_KEY, JSON.stringify(types))
+    } catch {}
+    try {
+      await fetch('/api/settings', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ default_types: types }),
+      })
     } catch {}
   }
 
@@ -170,6 +214,8 @@ export const useSearchStore = defineStore('search', () => {
     history,
     hasMore,
     fetchCloudTypes,
+    fetchDefaultTypes,
+    saveDefaultTypes,
     fetchHotKeywords,
     fetchHistory,
     doSearch,
