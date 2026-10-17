@@ -1,12 +1,4 @@
 {
-    "docker-project": {
-        "projects": [
-            {
-                "name": "cloudlink-finder",
-                "path": "docker"
-            }
-        ]
-    },
     "data-share": {
         "shares": [
             {
