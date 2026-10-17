@@ -28,13 +28,10 @@ CloudLink Finder 是一个面向互联网公开分享链接的多网盘资源聚
 
 ### 方式一：应用商店源安装（推荐）
 
-应用已收录进第三方应用商店源 **fnthird**，并随 **FnUnify** 聚合源同步。在飞牛应用中心添加应用商店源后即可直接搜索安装。
+本仓库自带应用商店源文件 `fnpack.json`，可直接添加为自更新源：新版本发布后本源自动更新，应用中心无需重复操作即可获得后续版本。
 
 1. 打开飞牛 fnOS 应用中心。
-2. 进入“应用商店源”管理，添加以下任一源地址：
-   - 本源（本项目仓库自带源）：`https://raw.githubusercontent.com/kitblue/cloudlink-finder/main/fnpack.json`
-   - fnthird（子源）：`https://raw.githubusercontent.com/kitblue/fnthird/main/fnpack.json`
-   - FnUnify（统一聚合源，推荐）：`https://raw.githubusercontent.com/kitblue/FnUnify/main/fnpack.json`
+2. 进入“应用商店源”管理，添加本源地址：`https://raw.githubusercontent.com/kitblue/cloudlink-finder/main/fnpack.json`
 3. 刷新商店源列表，搜索“网盘搜索神器”或 `cloudlink-finder`。
 4. 点击安装。安装包为离线版（Docker 镜像已内置），安装过程不访问 Docker Hub。
 
@@ -167,11 +164,11 @@ npm run dev
 
 - 离线版发布仓库：[kitblue/cloudlink-finder](https://github.com/kitblue/cloudlink-finder)（本仓库，Release 提供内置 Docker 镜像的离线 FPK）
 - 上游项目：[jindekun520-dev/cloudlink-finder](https://github.com/jindekun520-dev/cloudlink-finder)（功能与代码上游，本仓库自动跟随其新版本）
-- 应用商店源：fnthird（kitblue/fnthird）、FnUnify（kitblue/FnUnify）
+- 应用商店源：本源 `fnpack.json`（本仓库根目录，自更新源）
 
 ## 自动更新说明
 
-本仓库通过 GitHub Actions 自动跟随上游 `jindekun520-dev/cloudlink-finder` 的新版本：检测到上游发布新版本后自动同步代码、构建内置镜像的离线 FPK、发布 Release，并同步更新本源 `fnpack.json`（本仓库根目录，可直接作为应用商店源添加）与 fnthird 应用商店源条目（版本、下载地址、sha256），FnUnify 聚合源随后自动收录。
+本仓库通过 GitHub Actions 自动跟随上游 `jindekun520-dev/cloudlink-finder` 的新版本：检测到上游发布新版本后自动同步代码、构建内置镜像的离线 FPK、发布 Release，并自动更新本源 `fnpack.json`（本仓库根目录的应用商店源，版本、下载地址、sha256）。作为自更新源，添加本源后应用中心将自动获得后续更新。
 
 ## 使用说明
 
