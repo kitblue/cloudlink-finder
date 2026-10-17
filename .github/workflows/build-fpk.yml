@@ -76,19 +76,7 @@ jobs:
               --notes "离线安装包：Docker 镜像已内置，安装无需连接 Docker Hub。"
           fi
 
-      - name: 在线计算 sha256 并更新 fnthird 源
-        env:
-          FNTHIRD_TOKEN: ${{ secrets.FNTHIRD_TOKEN }}
-        run: |
-          FPK=$(ls release/*.fpk | head -1)
-          SHA=$(sha256sum "$FPK" | awk '{print $1}')
-          SIZE=$(stat -c%s "$FPK")
-          echo "fpk=${FPK}"
-          echo "sha256=${SHA}"
-          echo "size=${SIZE}"
-          APP_VERSION="${{ env.VERSION }}" APP_SHA256="${SHA}" APP_SIZE="${SIZE}" python3 scripts/update_source_entry.py
-
-      - name: 同步更新本仓库源文件 fnpack.json
+      - name: 在线计算 sha256 并更新本仓库源 fnpack.json
         env:
           GITHUB_TOKEN: ${{ github.token }}
         run: |
