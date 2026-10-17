@@ -46,6 +46,9 @@ jobs:
         run: |
           VERSION="$(awk -F '=' '/^[[:space:]]*version[[:space:]]*=/ {gsub(/[[:space:]]/, "", $2); print $2}' fpk/manifest)"
           echo "VERSION=${VERSION}" >> "$GITHUB_ENV"
+          # Dockerfile 使用根目录 dist/，将前端产物复制过去作为构建上下文
+          mkdir -p dist
+          cp -r frontend/dist/. dist/
           docker build -t "cloudlink-finder:${VERSION}" -f docker/Dockerfile .
           mkdir -p release
           docker save "cloudlink-finder:${VERSION}" | gzip > "release/cloudlink-finder-${VERSION}.tar.gz"
