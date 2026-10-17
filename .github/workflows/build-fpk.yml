@@ -1,0 +1,69 @@
+name: Build Offline FPK
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'fpk/**'
+      - 'docker/**'
+      - 'scripts/**'
+      - 'backend/**'
+      - 'frontend/**'
+      - 'nginx/**'
+      - 'supervisor/**'
+      - '.github/workflows/build-fpk.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 检出代码
+        uses: actions/checkout@v4
+
+      - name: 安装 Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: 预构建前端
+        run: |
+          cd frontend
+          if [ -f package-lock.json ]; then
+            npm ci --no-audit --no-fund
+          else
+            npm install --no-audit --no-fund
+          fi
+          npm run build
+          test -f dist/index.html
+
+      - name: 构建并导出 Docker 镜像
+        run: |
+          VERSION="$(awk -F '=' '/^[[:space:]]*version[[:space:]]*=/ {gsub(/[[:space:]]/, "", $2); print $2}' fpk/manifest)"
+          echo "VERSION=${VERSION}" >> "$GITHUB_ENV"
+          docker build -t "cloudlink-finder:${VERSION}" -f docker/Dockerfile .
+          mkdir -p release
+          docker save "cloudlink-finder:${VERSION}" | gzip > "release/cloudlink-finder-${VERSION}.tar.gz"
+          ls -lh release/
+
+      - name: 组装离线 FPK
+        run: bash scripts/build-offline-fpk.sh
+
+      - name: 上传 FPK 产物
+        uses: actions/upload-artifact@v4
+        with:
+          name: cloudlink-finder-offline-fpk
+          path: release/*.fpk
+
+      - name: 发布 Release（含离线 fpk）
+        if: github.event_name == 'push'
+        run: |
+          VERSION="${{ env.VERSION }}"
+          gh release create "v${VERSION}" "release/cloudlink-finder-${VERSION}-offline.fpk" \
+            --title "CloudLink Finder v${VERSION} (offline)" \
+            --notes "离线安装包：Docker 镜像已内置，安装无需连接 Docker Hub。" || true
