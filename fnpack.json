@@ -4,12 +4,12 @@
     "name": "cloudlink-finder",
     "author": "kitblue",
     "homepage": "https://github.com/kitblue/cloudlink-finder",
-    "description": "网盘搜索神器（CloudLink Finder）自更新官方源：本仓库内置应用商店源 fnpack.json，离线 FPK 已内置 Docker 镜像（安装无需连接 Docker Hub）；跟随上游新版本自动构建发布并更新本源，添加本源后应用中心自动获得后续版本更新。"
+    "description": "网盘搜索神器（CloudLink Finder）自更新官方源【离线版】：离线 FPK 已内置 Docker 镜像，安装无需连接 Docker Hub；跟随上游新版本自动构建发布并更新本源，添加本源后应用中心自动获得后续版本更新。"
   },
   "apps": {
     "cloudlink-finder": {
-      "display_name": "网盘搜索神器",
-      "desc": "多网盘资源聚合搜索工具：支持夸克、百度、阿里、迅雷等 9 种网盘的公开分享链接检索，提供链接有效性验证、标题匹配、网盘筛选、提取码复制、暗色模式与搜索缓存。离线版安装包已内置 Docker 镜像，安装无需连接 Docker Hub。",
+      "display_name": "网盘搜索神器（离线版）",
+      "desc": "【离线版】多网盘资源聚合搜索工具：支持夸克、百度、阿里、迅雷等 9 种网盘的公开分享链接检索，提供链接有效性验证、标题匹配、网盘筛选、提取码复制、暗色模式与搜索缓存。离线安装包已内置 Docker 镜像，安装全程无需连接 Docker Hub。",
       "platform": [
         "x86"
       ],
@@ -39,15 +39,6 @@
               "download_url": "https://github.com/kitblue/cloudlink-finder/releases/download/v1.0.10/cloudlink-finder-1.0.10-offline.fpk",
               "sha256": "b195d267489425c2eaf36358b05cd3aaaf0bd3724c031088cb3ae99f59a28f46",
               "size": 88169517
-            }
-          }
-        },
-        "1.0.11": {
-          "packages": {
-            "x86": {
-              "download_url": "https://github.com/kitblue/cloudlink-finder/releases/download/v1.0.11/cloudlink-finder-1.0.11-offline.fpk",
-              "sha256": "6078ccdf120bd7d5d04c2622bea8ab7ec2ddfe83fe09689a01bf40263f6788a3",
-              "size": 88267644
             }
           }
         }
