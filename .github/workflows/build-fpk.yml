@@ -65,8 +65,10 @@ jobs:
 
       - name: 发布 Release（含离线 fpk）
         if: github.event_name == 'push'
+        env:
+          GH_TOKEN: ${{ github.token }}
         run: |
           VERSION="${{ env.VERSION }}"
           gh release create "v${VERSION}" "release/cloudlink-finder-${VERSION}-offline.fpk" \
             --title "CloudLink Finder v${VERSION} (offline)" \
-            --notes "离线安装包：Docker 镜像已内置，安装无需连接 Docker Hub。" || true
+            --notes "离线安装包：Docker 镜像已内置，安装无需连接 Docker Hub。"
