@@ -3,6 +3,5 @@
 """
 from app.models.cache import SearchCache
 from app.models.history import SearchHistory
-from app.models.settings import AppSetting
 
-__all__ = ["SearchCache", "SearchHistory", "AppSetting"]
+__all__ = ["SearchCache", "SearchHistory"]

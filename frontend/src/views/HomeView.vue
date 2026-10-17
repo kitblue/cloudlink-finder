@@ -47,7 +47,6 @@ const searchStore = useSearchStore()
 
 onMounted(() => {
   searchStore.fetchCloudTypes()
-  searchStore.fetchDefaultTypes()
   searchStore.fetchHotKeywords()
 })
 

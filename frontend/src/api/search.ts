@@ -46,21 +46,4 @@ export const searchAPI = {
     const res = await fetch(`${BASE}/sources`)
     return res.json()
   },
-
-  async getSettings() {
-    const res = await fetch(`${BASE}/settings`)
-    return res.json()
-  },
-
-  async saveSettings(payload: {
-    search_sources?: Record<string, boolean>
-    default_types?: string[]
-  }) {
-    const res = await fetch(`${BASE}/settings`, {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload),
-    })
-    return res.json()
-  },
 }

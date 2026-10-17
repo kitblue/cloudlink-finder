@@ -131,20 +131,6 @@ class SearchOrchestrator:
         """获取所有已启用的搜索源"""
         return [s for s in self._sources if s.enabled]
 
-    def apply_settings(self, enabled_map: Optional[Dict[str, bool]] = None):
-        """按名称覆盖搜索源启用状态（用户设置持久化后应用）
-
-        enabled_map: {搜索源名称: 是否启用}。None 或空字典时不改变任何状态。
-        """
-        if not enabled_map:
-            return
-        for s in self._sources:
-            dict_name = (
-                s.to_dict().get("name") if hasattr(s, "to_dict") else getattr(s, "name", "")
-            )
-            if dict_name in enabled_map:
-                s.enabled = bool(enabled_map[dict_name])
-
     async def search(
         self,
         db: AsyncSession,

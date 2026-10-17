@@ -19,48 +19,18 @@
       </div>
     </section>
 
-    <!-- 默认筛选网盘 -->
-    <section class="settings-section">
-      <h3>🎯 默认筛选网盘</h3>
-      <p class="settings-desc">设置搜索时默认选中的网盘类型，可多选；保存后首页筛选与后续搜索自动生效</p>
-      <div class="type-list">
-        <label
-          v-for="t in searchStore.cloudTypes"
-          :key="t.key"
-          class="type-item"
-          :class="{ checked: searchStore.selectedTypes.includes(t.key) }"
-        >
-          <input
-            type="checkbox"
-            :checked="searchStore.selectedTypes.includes(t.key)"
-            @change="toggleDefaultType(t.key)"
-          />
-          <span>{{ t.name }}</span>
-        </label>
-      </div>
-      <div v-if="searchStore.cloudTypes.length === 0" class="no-sources">
-        加载网盘类型中...
-      </div>
-    </section>
-
     <!-- 搜索源状态 -->
     <section class="settings-section">
-      <h3>📡 搜索源</h3>
-      <p class="settings-desc">启用或禁用搜索源，保存后立即生效并持久化</p>
+      <h3>📡 搜索源状态</h3>
       <div class="source-list">
         <div v-for="s in sources" :key="s.name" class="source-item">
           <div class="source-info">
             <span class="source-name">{{ s.name }}</span>
             <span class="source-type">{{ s.type === 'search_engine' ? '搜索引擎' : 'API' }}</span>
           </div>
-          <button
-            class="source-toggle"
-            :class="{ enabled: s.enabled, saving: savingSources[s.name] }"
-            :disabled="!!savingSources[s.name]"
-            @click="toggleSource(s)"
-          >
-            {{ savingSources[s.name] ? '保存中…' : (s.enabled ? '✓ 已启用' : '✗ 已禁用') }}
-          </button>
+          <span class="source-status" :class="{ enabled: s.enabled }">
+            {{ s.enabled ? '✓ 已启用' : '✗ 已禁用' }}
+          </span>
         </div>
         <div v-if="sourceLoading" class="no-sources">
           加载搜索源信息中...
@@ -80,7 +50,7 @@
           <span class="stat-label">搜索源数量</span>
         </div>
         <div class="stat-item">
-          <span class="stat-value">{{ searchStore.cloudTypes.length || 9 }}</span>
+          <span class="stat-value">9</span>
           <span class="stat-label">支持网盘类型</span>
         </div>
         <div class="stat-item">
@@ -108,10 +78,8 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
 import { useThemeStore, type ThemeMode } from '../stores/theme'
-import { useSearchStore } from '../stores/search'
 
 const themeStore = useThemeStore()
-const searchStore = useSearchStore()
 
 const themeOptions = [
   { value: 'auto', label: '跟随系统', icon: '🖥️' },
@@ -128,11 +96,8 @@ interface SourceItem {
 const sources = ref<SourceItem[]>([])
 const sourceLoading = ref(true)
 const sourceError = ref('')
-const savingSources = ref<Record<string, boolean>>({})
 
-async function loadSources() {
-  sourceLoading.value = true
-  sourceError.value = ''
+onMounted(async () => {
   try {
     const res = await fetch('/api/sources')
     if (!res.ok) throw new Error(`HTTP ${res.status}`)
@@ -147,41 +112,6 @@ async function loadSources() {
   } finally {
     sourceLoading.value = false
   }
-}
-
-async function toggleSource(s: SourceItem) {
-  const next = !s.enabled
-  s.enabled = next
-  savingSources.value[s.name] = true
-  try {
-    const res = await fetch('/api/settings', {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ search_sources: { [s.name]: next } }),
-    })
-    if (!res.ok) throw new Error(`HTTP ${res.status}`)
-  } catch {
-    s.enabled = !next
-  } finally {
-    delete savingSources.value[s.name]
-  }
-}
-
-async function toggleDefaultType(key: string) {
-  const cur = [...searchStore.selectedTypes]
-  const idx = cur.indexOf(key)
-  if (idx > -1) {
-    cur.splice(idx, 1)
-  } else {
-    cur.push(key)
-  }
-  await searchStore.saveDefaultTypes(cur)
-}
-
-onMounted(() => {
-  loadSources()
-  searchStore.fetchCloudTypes()
-  searchStore.fetchDefaultTypes()
 })
 </script>
 
@@ -211,12 +141,6 @@ onMounted(() => {
   font-weight: 600;
   margin-bottom: var(--spacing-md);
   color: var(--text-primary);
-}
-
-.settings-desc {
-  font-size: 0.82rem;
-  color: var(--text-muted);
-  margin-bottom: var(--spacing-md);
 }
 
 .theme-options {
@@ -253,36 +177,6 @@ onMounted(() => {
   font-size: 1.5rem;
 }
 
-.type-list {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--spacing-sm);
-}
-
-.type-item {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  padding: var(--spacing-sm) var(--spacing-md);
-  border-radius: var(--border-radius-sm);
-  background: var(--bg-hover);
-  border: 1px solid transparent;
-  cursor: pointer;
-  font-size: 0.85rem;
-  color: var(--text-secondary);
-  transition: all var(--transition-fast);
-}
-
-.type-item.checked {
-  border-color: var(--color-primary);
-  background: rgba(99, 102, 241, 0.08);
-  color: var(--color-primary);
-}
-
-.type-item input {
-  accent-color: var(--color-primary);
-}
-
 .source-list {
   display: flex;
   flex-direction: column;
@@ -317,26 +211,13 @@ onMounted(() => {
   color: var(--color-primary);
 }
 
-.source-toggle {
+.source-status {
   font-size: 0.82rem;
-  padding: 4px 12px;
-  border-radius: var(--border-radius-sm);
-  border: 1px solid var(--border-color);
-  background: var(--bg-card);
   color: var(--text-muted);
-  cursor: pointer;
-  transition: all var(--transition-fast);
 }
 
-.source-toggle.enabled {
-  border-color: #22c55e;
+.source-status.enabled {
   color: #22c55e;
-  background: rgba(34, 197, 94, 0.08);
-}
-
-.source-toggle:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
 }
 
 .no-sources {
