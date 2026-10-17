@@ -1,4 +1,12 @@
 #!/bin/bash
 
-# 飞牛在安装前调用；Docker 项目由应用中心负责启动。
+# 离线镜像加载：Docker 镜像随 fpk 内置（cloudlink-finder-<version>.tar.gz），
+# 安装时先 docker load，应用中心随后执行 docker compose up，全程不依赖 Docker Hub。
+set -e
+
+IMAGE_TAR="$(ls "${TRIM_APPDEST}"/docker/cloudlink-finder-*.tar.gz 2>/dev/null | head -n1 || true)"
+if [ -n "$IMAGE_TAR" ] && [ -f "$IMAGE_TAR" ]; then
+    echo "[offline] docker load -i ${IMAGE_TAR}"
+    docker load -i "$IMAGE_TAR" >/dev/null 2>&1 || echo "[warn] docker load 失败，请确认镜像文件完整"
+fi
 exit 0
