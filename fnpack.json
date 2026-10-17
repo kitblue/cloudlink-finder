@@ -33,8 +33,8 @@
           "packages": {
             "x86": {
               "download_url": "https://github.com/kitblue/cloudlink-finder/releases/download/v1.0.10/cloudlink-finder-1.0.10-offline.fpk",
-              "sha256": "2f9e30bb482fdafb9d487596e11157d6af54a28e3a98ee1cc7cff2fb99cec9b6",
-              "size": 88159199
+              "sha256": "b195d267489425c2eaf36358b05cd3aaaf0bd3724c031088cb3ae99f59a28f46",
+              "size": 88169517
             }
           }
         },
