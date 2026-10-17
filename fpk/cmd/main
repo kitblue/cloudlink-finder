@@ -1,38 +1,51 @@
 #!/bin/bash
 # ============================================
-# 网盘搜索神器 - 生命周期管理脚本
-# 飞牛应用中心通过此脚本管理 Docker 容器的启停
+# 网盘搜索神器 - 生命周期管理脚本（native 模式）
+# 不依赖应用中心 docker-project 自动 compose，
+# 由本脚本完成离线镜像加载与 compose 启停。
 # ============================================
 
 set -e
 
-FILE_PATH="${TRIM_APPDEST}/docker/docker-compose.yaml"
+COMPOSE_FILE="${TRIM_APPDEST}/docker/docker-compose.yaml"
+COMPOSE_DIR="$(dirname "${COMPOSE_FILE}")"
+CONTAINER_NAME="cloudlink-finder"
+
+load_offline_image() {
+    IMAGE_TAR="$(ls "${TRIM_APPDEST}"/docker/cloudlink-finder-*.tar.gz 2>/dev/null | head -n1 || true)"
+    if [ -n "$IMAGE_TAR" ] && [ -f "$IMAGE_TAR" ]; then
+        echo "[offline] docker load -i ${IMAGE_TAR}"
+        docker load -i "$IMAGE_TAR" >/dev/null 2>&1 && echo "[offline] image loaded" || echo "[warn] docker load failed"
+    fi
+}
 
 is_docker_running() {
-    DOCKER_NAME="cloudlink-finder"
-    if [ -f "$FILE_PATH" ]; then
-        if docker inspect "$DOCKER_NAME" 2>/dev/null | grep -q '"Status": "running"'; then
-            return 0
-        fi
+    if docker inspect "$CONTAINER_NAME" >/dev/null 2>&1; then
+        docker inspect "$CONTAINER_NAME" | grep -q '"Status": "running"'
+        return $?
     fi
     return 1
 }
 
 case $1 in
 start)
-    # Docker 应用的启停由应用中心通过 docker compose 管理
-    # 这里只需返回成功
+    load_offline_image
+    if ! is_docker_running; then
+        echo "[start] docker compose up -d"
+        (cd "$COMPOSE_DIR" && docker compose -f "$COMPOSE_FILE" up -d)
+    fi
     exit 0
     ;;
 stop)
-    # 应用中心会执行 docker compose down
+    echo "[stop] docker compose down"
+    (cd "$COMPOSE_DIR" && docker compose -f "$COMPOSE_FILE" down) || true
     exit 0
     ;;
 status)
     if is_docker_running; then
-        exit 0    # 运行中
+        exit 0
     else
-        exit 3    # 未运行
+        exit 3
     fi
     ;;
 *)
