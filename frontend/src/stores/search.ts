@@ -22,7 +22,7 @@ export interface CloudType {
 
 export const useSearchStore = defineStore('search', () => {
   const keyword = ref('')
-  const selectedTypes = ref<string[]>([])
+  const selectedTypes = ref<string[]>(["quark", "aliyun"])
   const sortBy = ref('relevance')
   const results = ref<SearchItem[]>([])
   const total = ref(0)
