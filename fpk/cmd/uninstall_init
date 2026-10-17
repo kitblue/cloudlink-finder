@@ -1,3 +1,11 @@
 #!/bin/bash
 
+# 卸载时关闭并移除容器，保留共享数据目录
+set -e
+
+COMPOSE_FILE="${TRIM_APPDEST}/docker/docker-compose.yaml"
+COMPOSE_DIR="$(dirname "${COMPOSE_FILE}")"
+if [ -f "$COMPOSE_FILE" ]; then
+    (cd "$COMPOSE_DIR" && docker compose -f "$COMPOSE_FILE" down) || true
+fi
 exit 0
