@@ -4,12 +4,12 @@
     "name": "cloudlink-finder",
     "author": "kitblue",
     "homepage": "https://github.com/kitblue/cloudlink-finder",
-    "description": "网盘搜索神器（CloudLink Finder）自更新官方源【离线版】：离线 FPK 已内置 Docker 镜像，安装无需连接 Docker Hub；跟随上游新版本自动构建发布并更新本源，添加本源后应用中心自动获得后续版本更新。"
+    "description": "网盘搜索神器（CloudLink Finder）自更新官方源【离线版】。离线版含义：离线 FPK 已内置应用 Docker 镜像，安装时自动本地加载，全程无需连接 Docker Hub，即使 Docker Hub 无法访问也能正常安装。跟随上游新版本自动构建发布并更新本源，添加本源后应用中心自动获得后续版本更新。"
   },
   "apps": {
     "cloudlink-finder": {
       "display_name": "网盘搜索神器（离线版）",
-      "desc": "【离线版】多网盘资源聚合搜索工具：支持夸克、百度、阿里、迅雷等 9 种网盘的公开分享链接检索，提供链接有效性验证、标题匹配、网盘筛选、提取码复制、暗色模式与搜索缓存。离线安装包已内置 Docker 镜像，安装全程无需连接 Docker Hub。",
+      "desc": "【离线版】离线安装包已内置应用 Docker 镜像，安装时自动本地加载，全程无需连接 Docker Hub（即使 Docker Hub 被墙或拉取失败也能正常安装）。多网盘资源聚合搜索工具：支持夸克、百度、阿里、迅雷等 9 种网盘的公开分享链接检索，提供链接有效性验证、标题匹配、网盘筛选、提取码复制、暗色模式与搜索缓存。",
       "platform": [
         "x86"
       ],
